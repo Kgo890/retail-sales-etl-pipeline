@@ -1,0 +1,25 @@
+# Virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Data files
+data/raw/
+data/processed/
+data/analytics/
+
+# Environment variables
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS/editor cruft
+.DS_Store
+.vscode/
+.idea/
+
+# Logs
+*.log
