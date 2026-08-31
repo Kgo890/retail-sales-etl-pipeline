@@ -484,7 +484,7 @@ retail-etl-pipeline/
 ├── .env.example
 ├── README.md
 └── requirements.txt
-
+```
 
 ## License
 
