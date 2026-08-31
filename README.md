@@ -9,30 +9,71 @@ This project processes ~500K transaction records from a UK-based online retailer
 Along the way I ran into (and fixed) a few real bugs: a sign error in cancellation quantities, a product-affinity query that exploded to 1.5M rows before I filtered it down, and an ETL sequencing issue that was quietly inflating a duplicate-detection metric by almost 20x. Those are documented below, since finding and fixing that stuff is most of what the job actually is.
 
 ## Architecture
+
+```text
 UCI ML Repo — Online Retail Dataset (id=352)
-│
-▼
-Extract (src/extract/dataset.py) — fetches dataset via ucimlrepo, saves as data.csv + data_ids.csv
-│
-▼
-Python/pandas transform (src/transform/transaction.py)
-— classify transaction types (sale, cancellation, adjustment, etc.)
-— dedupe exact rows, flag potential duplicates
-— split into fact tables by transaction type
-│
-▼
-PostgreSQL star schema (src/load/load_data.py)
-— dim_product, dim_customer, dim_country, dim_date
-— fact_sales, fact_cancellations, fact_adjustment, fact_non_sale
-— data_quality_potential_duplicates
-│
-▼
-46 SQL analytical views (postgresql/analytics/)
-— 8 business-category schemas: sales, product, customer, geographic, cancellation, adjustment, non_sales, data_quality
-│
-▼
-Power BI dashboard (Import mode, connected to PostgreSQL)
-— 3 pages: Executive Overview, Customers & Risk, Products & Geography
+                │
+                ▼
+Extract
+`src/extract/dataset.py`
+                │
+                ├── Fetch dataset via ucimlrepo
+                └── Save as data/raw/data.csv + data_ids.csv
+                │
+                ▼
+Transform
+`src/transform/transaction.py`
+                │
+                ├── Classify transaction types
+                │   ├── Sale
+                │   ├── Cancellation
+                │   ├── Account Adjustment
+                │   ├── Inventory Adjustment
+                │   └── Zero-Value / Non-Sale
+                │
+                ├── Remove exact duplicate rows
+                ├── Flag potential duplicates
+                ├── Calculate revenue
+                └── Split records by transaction type
+                │
+                ▼
+PostgreSQL Star Schema
+`src/load/load_data.py`
+                │
+                ├── dim_product
+                ├── dim_customer
+                ├── dim_country
+                ├── dim_date
+                │
+                ├── fact_sales
+                ├── fact_cancellations
+                ├── fact_adjustment
+                ├── fact_non_sale
+                │
+                └── data_quality_potential_duplicates
+                │
+                ▼
+Analytical Layer
+`postgresql/analytics/`
+                │
+                ├── sales
+                ├── product
+                ├── customer
+                ├── geographic
+                ├── cancellation
+                ├── adjustment
+                ├── non_sales
+                └── data_quality
+                │
+                ▼
+46 Analytical Views
+                │
+                ▼
+Power BI
+                │
+                ├── Executive Overview
+                ├── Customers & Risk
+                └── Products & Geography
 
 
 ## Data Model
@@ -403,27 +444,46 @@ To generate standalone CSV backups of all 46 analytical views outside of Postgre
 python postgresql/analytics/saving_analytics.py
 ```
 
-## Repository Structure
 
+### Repository Structure
+
+```text
 retail-etl-pipeline/
+│
 ├── data/
-│ ├── raw/ # Unprocessed dataset snapshots from UCI ML Repo
-│ ├── processed/ # Normalized CSVs split by fact/dimension tables
-│ └── analytics/ # CSV exports of all PostgreSQL analytical views
+│   ├── raw/
+│   ├── processed/
+│   └── analytics/
+│
 ├── notebooks/
-│ └── exploration.ipynb # Exploratory data analysis & classification prototyping
+│   └── exploration.ipynb
+│
 ├── postgresql/
-│ ├── analytics/ # SQL queries & exporter script for analytical views
-│ └── schema_n_resets/ # DDL schema definitions and database reset scripts
+│   ├── analytics/
+│   │   ├── *.sql
+│   │   └── saving_analytics.py
+│   │
+│   └── schema_n_resets/
+│       ├── schema.sql
+│       └── reset_database.sql
+│
 ├── src/
-│ ├── extract/ # Data extraction routines (UCI ML API driver)
-│ ├── transform/ # Transaction classification & data cleaning rules
-│ └── load/ # SQLAlchemy engine setups and upsert load scripts
+│   ├── extract/
+│   │   └── dataset.py
+│   │
+│   ├── transform/
+│   │   └── transaction.py
+│   │
+│   └── load/
+│       ├── database.py
+│       └── load_data.py
+│
 ├── tests/
-│ └── test_environment.py # Basic database connection & dependency validation
-├── .env.example # Environment variable template for database credentials
-├── README.md # Project documentation
-└── requirements.txt # Required Python packages
+│   └── test_environment.py
+│
+├── .env.example
+├── README.md
+└── requirements.txt
 
 
 ## License
