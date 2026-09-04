@@ -28,7 +28,8 @@ An interactive line graph tracking the chronological AOV velocity curve linked d
 ![Customer Retention & Churn Dynamics](powerbi/Customer%20Retention%20%26%20Churn%20Dynamics.png)
 
 #### Detailed At-Risk Customer Segment Analysis
-Drilling directly into the RFM framework isolates the exact unique account profiles (such as Customer ID `17850`) that represent high-value retention targets for marketing campaigns.
+Drilling directly into the RFM framework isolates the exact unique account profiles (such as Customer ID `17850`) that represent high-value retention targets for marketing campaigns.  
+
 ![At-Risk Customer Segment](powerbi/At-risk-customer.png)
 
 ### 3. Operations Risk & Item Diagnostics
@@ -41,7 +42,7 @@ The unified interactive canvas aggregates all data streams into a single corpora
 
 ---
 
-## 🎯 Strategic Business Directives & Core Questions Answered
+## Strategic Business Directives & Core Questions Answered
 
 ### Directive 1: Quantifying Revenue At Risk
 * **The Business Question:** What percentage of our total historical revenue is sitting with customers who haven't bought anything in over 90 days?
@@ -78,7 +79,7 @@ The unified interactive canvas aggregates all data streams into a single corpora
 
 ---
 
-## 🏗️ Technical Architecture & Schema Design
+##  Technical Architecture & Schema Design
 To protect enterprise reporting speed, optimize analytical queries, and enforce clear security access controls, the database is architected with a multi-schema relational model in PostgreSQL, breaking entirely away from standard single-schema (`public`) clutter.
 
 ```text
@@ -208,6 +209,7 @@ source venv/bin/activat
 epip install -r requirements.txt
 
 Run pipeline to deploy tables, schemas, and analytical views
+
 python postgresql/schema_n_resets/reset_database.py
 python -m src.extract.datasetpython -m src.transform.transaction
 python -m src.load.load_data
