@@ -131,7 +131,7 @@ END;
     ROUND(
         (COALESCE(pc.total_cancelled, 0)::NUMERIC / 
         NULLIF(
-            ps.total_sold + COALESCE(pc.total_cancelled, 0),
+            ps.total_sold,
             0
         )) * 100, 
         2
