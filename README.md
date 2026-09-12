@@ -314,7 +314,7 @@ The largest outliers include products with cancellation rates above **95%**, wit
 
 The dataset is historical, so using the current date to calculate customer inactivity would incorrectly classify most customers as inactive.
 
-Instead, I used the **maximum transaction date in the dataset as the analysis snapshot date**.
+Instead, I used the maximum transaction date in the dataset (December 9, 2011) as the analysis snapshot date.
 
 For each customer:
 
